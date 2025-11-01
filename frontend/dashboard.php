@@ -146,29 +146,34 @@ if (!isset($_SESSION['username'])) {
         <p id="tingkatAir">75%</p>
         <div class="progress-bar"><div id="tingkatAirBar" class="progress-fill"></div></div>
       </div>
-      <div class="card">
-        <h4><i class="fa fa-temperature-high"></i> Suhu Air</h4>
-        <p id="suhuAir">27.5 °C</p>
-      </div>
-      <div class="card">
-        <h4><i class="fa fa-flask"></i> pH Air</h4>
-        <p id="phAir">7.2 pH</p>
-      </div>
+
+
       <div class="card">
         <h4><i class="fa fa-eye"></i> Kekeruhan Air</h4>
         <p id="kekeruhanAir">25.5 NTU</p>
       </div>
     </div>
 
-    <div class="section-title">⚡ Sistem Power Source</div>
+    <div class="section-title">⚡ Baterai Status</div>
     <div class="grid">
       <div class="card">
-        <h4><i class="fa fa-plug"></i> Tegangan Masuk</h4>
-        <p id="teganganMasuk">13.9 V</p>
+        <h4><i class="fa fa-plug"></i> Tegangan Baterai</h4>
+        <p id="teganganBaterai">13.9 V</p>
       </div>
       <div class="card">
-        <h4><i class="fa fa-bolt"></i> Tegangan Keluar</h4>
-        <p id="teganganKeluar">12.8 V</p>
+        <h4><i class="fa fa-bolt"></i> Arus Baterai</h4>
+        <p id="arusBaterai">12.8 A</p>
+      </div>
+    </div>
+    <div class="section-title">⚡ Solar Panel Status</div>
+    <div class="grid">
+      <div class="card">
+        <h4><i class="fa fa-plug"></i> Tegangan Solar Panel</h4>
+        <p id="teganganSolarpanel">13.9 V</p>
+      </div>
+      <div class="card">
+        <h4><i class="fa fa-bolt"></i> Arus Solar Panel</h4>
+        <p id="arusSolarpanel">12.8 A</p>
       </div>
     </div>
 
@@ -185,24 +190,23 @@ if (!isset($_SESSION['username'])) {
 
     function updateRandomData() {
       const tingkatAir = getRandom(50, 100, 0);
-      const suhu = getRandom(25, 32, 1);
-      const ph = getRandom(6.5, 8.5, 2);
       const kekeruhan = getRandom(10, 80, 1);
-      const tegIn = getRandom(12, 14, 1);
-      const tegOut = getRandom(11, 13, 1);
+      const teganganBaterai = getRandom(12, 14, 1);
+      const arusBaterai = getRandom(11, 13, 1);
+      const teganganSolarpanel = getRandom(12, 14, 1);
+      const arusSolarpanel = getRandom(11, 13, 1);
 
       document.getElementById('tingkatAir').textContent = tingkatAir + '%';
-      document.getElementById('suhuAir').textContent = suhu + ' °C';
-      document.getElementById('phAir').textContent = ph + ' pH';
       document.getElementById('kekeruhanAir').textContent = kekeruhan + ' NTU';
-      document.getElementById('teganganMasuk').textContent = tegIn + ' V';
-      document.getElementById('teganganKeluar').textContent = tegOut + ' V';
+      document.getElementById('teganganBaterai').textContent = teganganBaterai + ' V';
+      document.getElementById('arusBaterai').textContent = arusBaterai + ' A';
+      document.getElementById('teganganSolarpanel').textContent = teganganSolarpanel + ' V';
+      document.getElementById('arusSolarpanel').textContent = arusSolarpanel + ' A';
 
       document.getElementById('tingkatAirBar').style.width = tingkatAir + "%";
 
       // warna dinamis
-      document.getElementById('suhuAir').style.color = suhu > 30 ? "#FF6B6B" : "#4C6EF5";
-      document.getElementById('phAir').style.color = (ph < 6.5 || ph > 8.5) ? "#E03131" : "#4C6EF5";
+      
     }
 
     updateRandomData();
