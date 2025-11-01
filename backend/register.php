@@ -1,5 +1,5 @@
 <?php
-include "config.php";
+include "../database/config.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sss", $username, $email, $passwordHash);
 
     if ($stmt->execute()) {
-        echo "Register berhasil. <a href='index.php'>Login</a>";
+        echo "Register berhasil. <a href='../frontend/index.php'>Login</a>";
     } else {
         echo "Register gagal: " . $stmt->error;
     }

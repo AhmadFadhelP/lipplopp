@@ -1,7 +1,7 @@
 <?php
-$servername = "localhost";
+$servername = "db";
 $username   = "root";    // default XAMPP
-$password   = "";        // default kosong
+$password   = "root";        // default kosong
 $dbname     = "db_tugasakhir";
 
 // Create connection

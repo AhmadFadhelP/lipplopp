@@ -59,7 +59,7 @@
 <body>
   <div class="container">
     <h2>Register</h2>
-    <form method="POST" action="register.php">
+    <form method="POST" action="../backend/register.php">
       <input type="text" name="username" placeholder="Username" required>
       <input type="email" name="email" placeholder="Email" required>
       <input type="password" name="password" placeholder="Password" required>

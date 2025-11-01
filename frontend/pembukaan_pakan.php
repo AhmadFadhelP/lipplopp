@@ -2,7 +2,7 @@
 session_start();
 // cek apakah user sudah login
 if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
+    header("Location: /frontend/login.php");
     exit();
 }
 ?>
@@ -100,7 +100,7 @@ if (!isset($_SESSION['username'])) {
       let berat = card.dataset.value;
 
       // Kirim ke server
-      fetch("simpan_pakan.php", {
+      fetch("../backend/simpan_pakan.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "berat=" + encodeURIComponent(berat)

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "config.php";
+include "../database/config.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
@@ -18,11 +18,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $row['password'])) {
             session_regenerate_id(true); // aman
             $_SESSION['username'] = $row['username'];
-            header("Location: dashboard.php"); // arahkan ke dashboard
+            header("Location: ../frontend/dashboard.php"); // arahkan ke dashboard
             exit;
         } else {
             $_SESSION['error_message'] = "Password salah!";
-            header("Location: index.php");
+            header("Location: ../frontend/index.php");
             exit;
         }
     } else {

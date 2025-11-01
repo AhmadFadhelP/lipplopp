@@ -1,22 +1,13 @@
-```php
 <?php
 session_start();
 // cek apakah user sudah login
 if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
+    header("Location: /frontend/login.php");
     exit();
 }
 
 // Koneksi database
-$host = "localhost";
-$user = "root";       // ganti sesuai setting
-$pass = "";           // ganti sesuai setting
-$db   = "db_tugasakhir"; // ganti sesuai DB kamu
-
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
-}
+include '../database/config.php';
 
 // Ambil data pakan
 $sql = "SELECT * FROM pakan ORDER BY id DESC";
@@ -105,4 +96,3 @@ $result = $conn->query($sql);
 </body>
 </html>
 <?php $conn->close(); ?>
-```

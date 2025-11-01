@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['username'])) {
-    header("Location: index.php");
+    header("Location: /frontend/index.php");
     exit();
 }
 ?>
@@ -135,7 +135,7 @@ if (!isset($_SESSION['username'])) {
 <body>
   <header>
     <h2>Hi, <?php echo htmlspecialchars($_SESSION['username']); ?> 👋</h2>
-    <div><a href="logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></div>
+    <div><a href="../backend/logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></div>
   </header>
 
   <div class="container">
