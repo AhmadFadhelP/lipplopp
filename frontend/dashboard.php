@@ -12,16 +12,52 @@ if (!isset($_SESSION['username'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard IoT</title>
   <style>
+    :root {
+      --bg-gradient-start: #f0f4ff;
+      --bg-gradient-end: #d9e4ff;
+      --header-gradient-start: #4C6EF5;
+      --header-gradient-end: #5C7CFA;
+      --card-bg: white;
+      --text-primary: #333;
+      --text-secondary: #555;
+      --text-title: #2c3e50;
+      --border-color: rgba(0,0,0,0.05);
+      --shadow-color: rgba(0,0,0,0.08);
+      --shadow-hover: rgba(0,0,0,0.15);
+      --accent-color: #4C6EF5;
+      --progress-bg: #eee;
+      --battery-bg: #eee;
+    }
+
+    body.dark-mode {
+      --bg-gradient-start: #1a1a2e;
+      --bg-gradient-end: #16213e;
+      --header-gradient-start: #0f3460;
+      --header-gradient-end: #16537e;
+      --card-bg: #1e2a3a;
+      --text-primary: #e4e4e4;
+      --text-secondary: #b0b0b0;
+      --text-title: #ffffff;
+      --border-color: rgba(255,255,255,0.1);
+      --shadow-color: rgba(0,0,0,0.3);
+      --shadow-hover: rgba(0,0,0,0.5);
+      --accent-color: #5C7CFA;
+      --progress-bg: #2a3f5f;
+      --battery-bg: #2a3f5f;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f0f4ff, #d9e4ff);
+      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
       margin: 0;
       padding: 0;
-      color: #333;
+      color: var(--text-primary);
+      transition: background 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
     }
 
     header {
-      background: linear-gradient(90deg, #4C6EF5, #5C7CFA);
+      background: linear-gradient(90deg, var(--header-gradient-start), var(--header-gradient-end));
       padding: 20px;
       color: white;
       display: flex;
@@ -30,6 +66,8 @@ if (!isset($_SESSION['username'])) {
       box-shadow: 0 3px 10px rgba(0,0,0,0.2);
       border-bottom: 2px solid rgba(255,255,255,0.2);
       animation: fadeInDown 0.8s ease;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     @keyframes fadeInDown {
       from {opacity:0; transform: translateY(-20px);}
@@ -45,13 +83,37 @@ if (!isset($_SESSION['username'])) {
     }
     header a:hover { background: rgba(255,255,255,0.2); }
 
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dark-mode-toggle {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .dark-mode-toggle:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
     .container { padding: 30px; max-width: 1100px; margin: 0 auto; }
     .section-title {
       font-size: 22px;
       font-weight: 700;
       margin: 26px 0 16px;
-      color: #2c3e50;
-      border-left: 4px solid #4C6EF5;
+      color: var(--text-title);
+      border-left: 4px solid var(--accent-color);
       padding-left: 10px;
     }
 
@@ -62,32 +124,32 @@ if (!isset($_SESSION['username'])) {
     }
 
     .card {
-      background: white;
+      background: var(--card-bg);
       border-radius: 16px;
       padding: 20px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-      border: 1px solid rgba(0,0,0,0.05);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 6px 16px var(--shadow-color);
+      border: 1px solid var(--border-color);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.3s ease;
     }
     .card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+      box-shadow: 0 10px 20px var(--shadow-hover);
     }
 
     .card h4 {
       margin: 0;
       font-size: 15px;
-      color: #555;
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .card h4 i { font-size: 16px; color: #4C6EF5; }
+    .card h4 i { font-size: 16px; color: var(--accent-color); }
     .card p {
       margin: 10px 0 0;
       font-size: 22px;
       font-weight: 700;
-      color: #4C6EF5;
+      color: var(--accent-color);
       transition: color 0.3s ease;
     }
 
@@ -95,20 +157,20 @@ if (!isset($_SESSION['username'])) {
       width: 100%;
       height: 10px;
       border-radius: 5px;
-      background: #eee;
+      background: var(--progress-bg);
       margin-top: 12px;
       overflow: hidden;
     }
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #4C6EF5, #5C7CFA);
+      background: linear-gradient(90deg, var(--header-gradient-start), var(--header-gradient-end));
       width: 0%;
       transition: width 1s ease;
     }
 
     .button-link {
       display: inline-block;
-      background: linear-gradient(90deg, #4C6EF5, #5C7CFA);
+      background: linear-gradient(90deg, var(--header-gradient-start), var(--header-gradient-end));
       border-radius: 12px;
       padding: 14px 22px;
       color: white;
@@ -148,13 +210,120 @@ if (!isset($_SESSION['username'])) {
       flex-grow: 1;
     }
 
-    @media (max-width: 720px) {
-      .button-link { display: block; margin-bottom: 12px; }
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px;
+      }
+
+      header h2 {
+        font-size: 18px;
+      }
+
+      header a, .dark-mode-toggle {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+
+      .container {
+        padding: 15px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        margin: 20px 0 12px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .card h4 {
+        font-size: 14px;
+      }
+
+      .card p {
+        font-size: 20px;
+      }
+
+      .button-link {
+        display: block;
+        margin-bottom: 12px;
+        margin-right: 0;
+        text-align: center;
+        font-size: 14px;
+        padding: 12px 18px;
+      }
+
       .battery-section-grid {
         grid-template-columns: 1fr;
       }
+
       .battery-layout {
         flex-direction: column;
+      }
+
+      .battery__card {
+        height: auto;
+        min-height: 200px;
+        padding: 1rem 1.5rem;
+      }
+
+      .battery__percentage {
+        font-size: 2rem !important;
+      }
+
+      .battery__pill {
+        width: 60px;
+        height: 150px;
+      }
+    }
+
+    /* Extra small mobile devices (portrait phones) */
+    @media (max-width: 480px) {
+      header h2 {
+        font-size: 16px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .header-controls {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .container {
+        padding: 10px;
+      }
+
+      .section-title {
+        font-size: 16px;
+      }
+
+      .card p {
+        font-size: 18px;
+      }
+
+      .battery__card {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 20px;
+      }
+
+      .battery__pill {
+        justify-self: center;
+      }
+
+      .battery__status {
+        position: relative;
+        bottom: 0;
+        justify-content: center;
+        margin-top: 10px;
       }
     }
 
@@ -163,12 +332,15 @@ if (!isset($_SESSION['username'])) {
       position: relative;
       width: 100%;
       height: 240px;
-      background-color: #fff;
+      background-color: var(--card-bg);
       padding: 1.5rem 2rem;
       border-radius: 1.5rem;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       align-items: center;
+      box-shadow: 0 6px 16px var(--shadow-color);
+      border: 1px solid var(--border-color);
+      transition: background 0.3s ease;
     }
 
     .battery-section-grid {
@@ -179,10 +351,12 @@ if (!isset($_SESSION['username'])) {
 
     .battery__text {
       margin-bottom: .5rem;
+      transition: color 0.3s ease;
     }
 
     .battery__percentage {
       font-size: 2.5rem;
+      transition: color 0.3s ease;
     }
 
     .battery__status {
@@ -202,11 +376,30 @@ if (!isset($_SESSION['username'])) {
       position: relative;
       width: 75px;
       height: 180px;
-      background-color: #eee;
-      box-shadow: inset 20px 0 48px hsl(0, 0%, 86%), 
+      background-color: var(--battery-bg);
+      box-shadow: inset 20px 0 48px hsl(0, 0%, 86%),
                   inset -4px 12px 48px hsl(0, 0%, 96%);
       border-radius: 3rem;
       justify-self: flex-end;
+      transition: background-color 0.3s ease;
+    }
+
+    body.dark-mode .battery__pill {
+      box-shadow: inset 20px 0 48px rgba(0, 0, 0, 0.3),
+                  inset -4px 12px 48px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Dark mode chart improvements */
+    body.dark-mode canvas {
+      filter: brightness(0.9);
+    }
+
+    body.dark-mode .battery__text {
+      color: var(--text-secondary);
+    }
+
+    body.dark-mode .battery__percentage {
+      color: var(--text-primary);
     }
 
     .battery__level {
@@ -308,7 +501,13 @@ if (!isset($_SESSION['username'])) {
 <body>
   <header>
     <h2>Hi, <?php echo htmlspecialchars($_SESSION['username']); ?> 👋</h2>
-    <div><a href="../backend/logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></div>
+    <div class="header-controls">
+      <button class="dark-mode-toggle" id="darkModeToggle" onclick="toggleDarkMode()">
+        <i class="fa fa-moon"></i>
+        <span class="toggle-text">Dark</span>
+      </button>
+      <a href="../backend/logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a>
+    </div>
   </header>
 
   <div class="container">
@@ -389,7 +588,16 @@ if (!isset($_SESSION['username'])) {
     let airChart, powerChart;
     let lastDataId = null; // Track last data ID to prevent duplicates
 
+    function getChartColors() {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        return {
+            gridColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+            textColor: isDarkMode ? '#e4e4e4' : '#666'
+        };
+    }
+
     function initCharts() {
+        const colors = getChartColors();
         const airCtx = document.getElementById('airChart').getContext('2d');
         airChart = new Chart(airCtx, {
             type: 'line',
@@ -421,22 +629,39 @@ if (!isset($_SESSION['username'])) {
                 scales: {
                     y: {
                         beginAtZero: true,
+                        grid: {
+                            color: colors.gridColor
+                        },
+                        ticks: {
+                            color: colors.textColor
+                        },
                         title: {
                             display: true,
-                            text: 'Value'
+                            text: 'Value',
+                            color: colors.textColor
                         }
                     },
                     x: {
+                        grid: {
+                            color: colors.gridColor
+                        },
+                        ticks: {
+                            color: colors.textColor
+                        },
                         title: {
                             display: true,
-                            text: 'Time'
+                            text: 'Time',
+                            color: colors.textColor
                         }
                     }
                 },
                 plugins: {
                     legend: {
                         display: true,
-                        position: 'top'
+                        position: 'top',
+                        labels: {
+                            color: colors.textColor
+                        }
                     },
                     tooltip: {
                         enabled: true
@@ -490,22 +715,39 @@ if (!isset($_SESSION['username'])) {
                 scales: {
                     y: {
                         beginAtZero: true,
+                        grid: {
+                            color: colors.gridColor
+                        },
+                        ticks: {
+                            color: colors.textColor
+                        },
                         title: {
                             display: true,
-                            text: 'Value'
+                            text: 'Value',
+                            color: colors.textColor
                         }
                     },
                     x: {
+                        grid: {
+                            color: colors.gridColor
+                        },
+                        ticks: {
+                            color: colors.textColor
+                        },
                         title: {
                             display: true,
-                            text: 'Time'
+                            text: 'Time',
+                            color: colors.textColor
                         }
                     }
                 },
                 plugins: {
                     legend: {
                         display: true,
-                        position: 'top'
+                        position: 'top',
+                        labels: {
+                            color: colors.textColor
+                        }
                     },
                     tooltip: {
                         enabled: true
@@ -513,6 +755,34 @@ if (!isset($_SESSION['username'])) {
                 }
             }
         });
+    }
+
+    function updateChartColors() {
+        const colors = getChartColors();
+
+        // Update air chart
+        if (airChart) {
+            airChart.options.scales.y.grid.color = colors.gridColor;
+            airChart.options.scales.y.ticks.color = colors.textColor;
+            airChart.options.scales.y.title.color = colors.textColor;
+            airChart.options.scales.x.grid.color = colors.gridColor;
+            airChart.options.scales.x.ticks.color = colors.textColor;
+            airChart.options.scales.x.title.color = colors.textColor;
+            airChart.options.plugins.legend.labels.color = colors.textColor;
+            airChart.update();
+        }
+
+        // Update power chart
+        if (powerChart) {
+            powerChart.options.scales.y.grid.color = colors.gridColor;
+            powerChart.options.scales.y.ticks.color = colors.textColor;
+            powerChart.options.scales.y.title.color = colors.textColor;
+            powerChart.options.scales.x.grid.color = colors.gridColor;
+            powerChart.options.scales.x.ticks.color = colors.textColor;
+            powerChart.options.scales.x.title.color = colors.textColor;
+            powerChart.options.plugins.legend.labels.color = colors.textColor;
+            powerChart.update();
+        }
     }
 
     function initBattery(voltage, current){
@@ -702,6 +972,47 @@ if (!isset($_SESSION['username'])) {
       }
     }
 
+    // Dark Mode Toggle Function
+    function toggleDarkMode() {
+      const body = document.body;
+      const toggle = document.getElementById('darkModeToggle');
+      const toggleText = toggle.querySelector('.toggle-text');
+      const toggleIcon = toggle.querySelector('i');
+
+      body.classList.toggle('dark-mode');
+
+      // Update button icon and text
+      if (body.classList.contains('dark-mode')) {
+        toggleIcon.className = 'fa fa-sun';
+        toggleText.textContent = 'Light';
+        localStorage.setItem('darkMode', 'enabled');
+      } else {
+        toggleIcon.className = 'fa fa-moon';
+        toggleText.textContent = 'Dark';
+        localStorage.setItem('darkMode', 'disabled');
+      }
+
+      // Update chart colors when toggling dark mode
+      updateChartColors();
+    }
+
+    // Load Dark Mode Preference on Page Load
+    function loadDarkModePreference() {
+      const darkMode = localStorage.getItem('darkMode');
+      const body = document.body;
+      const toggle = document.getElementById('darkModeToggle');
+      const toggleText = toggle.querySelector('.toggle-text');
+      const toggleIcon = toggle.querySelector('i');
+
+      if (darkMode === 'enabled') {
+        body.classList.add('dark-mode');
+        toggleIcon.className = 'fa fa-sun';
+        toggleText.textContent = 'Light';
+      }
+    }
+
+    // Initialize everything
+    loadDarkModePreference();
     initCharts();
     updateRealData();
     updateCharts();

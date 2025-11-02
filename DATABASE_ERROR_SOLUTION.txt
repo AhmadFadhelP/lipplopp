@@ -1,0 +1,225 @@
+================================================================================
+SOLUTION: Fix "Unknown database 'db_tugasakhir'" Error
+================================================================================
+
+ERROR MESSAGE:
+Fatal error: Uncaught mysqli_sql_exception: Unknown database 'db_tugasakhir'
+in /var/www/html/database-config.php:8
+
+PROBLEM:
+The MySQL database container is running, but the database 'db_tugasakhir'
+hasn't been created yet. This typically happens when the Docker volume
+already exists from a previous run, preventing the initialization script
+from executing.
+
+================================================================================
+SOLUTION - Follow these steps on Windows:
+================================================================================
+
+METHOD 1: Reset Database Volume (Recommended)
+----------------------------------------------
+This will create a fresh database with all tables.
+
+1. Stop all running containers:
+   docker-compose down
+
+2. Remove the database volume to start fresh:
+   docker volume rm lipplopp_db_data
+
+   Note: If the above doesn't work, try:
+   docker volume ls
+   (Look for the volume name containing 'db_data', then remove it)
+
+3. Start the containers again:
+   docker-compose up -d
+
+4. Wait 30 seconds for MySQL to initialize completely
+
+5. Verify the database was created:
+   docker-compose exec db mysql -uroot -proot -e "SHOW DATABASES;"
+
+   You should see 'db_tugasakhir' in the list.
+
+6. Verify tables were created:
+   docker-compose exec db mysql -uroot -proot db_tugasakhir -e "SHOW TABLES;"
+
+   You should see: users, pakan, sensor_data, sensor_alerts
+
+7. Try registering an account again at:
+   http://localhost:8080
+
+
+METHOD 2: Manually Create Database (Alternative)
+-------------------------------------------------
+If Method 1 doesn't work, create the database manually:
+
+1. Access the MySQL container:
+   docker-compose exec db mysql -uroot -proot
+
+2. Create the database:
+   CREATE DATABASE IF NOT EXISTS db_tugasakhir;
+   USE db_tugasakhir;
+
+3. Exit MySQL:
+   exit
+
+4. Import the initialization script:
+   docker-compose exec -T db mysql -uroot -proot db_tugasakhir < database/init.sql
+
+5. Verify tables were created:
+   docker-compose exec db mysql -uroot -proot db_tugasakhir -e "SHOW TABLES;"
+
+6. Try registering again at http://localhost:8080
+
+
+METHOD 3: Complete Clean Start
+-------------------------------
+If both methods above fail, do a complete clean restart:
+
+1. Stop all containers:
+   docker-compose down
+
+2. Remove all containers, volumes, and images for this project:
+   docker-compose down -v --remove-orphans
+
+3. Remove the database volume specifically:
+   docker volume rm lipplopp_db_data
+
+4. Rebuild and start fresh:
+   docker-compose up --build -d
+
+5. Wait 30-60 seconds for initialization
+
+6. Check the database logs for any errors:
+   docker-compose logs db
+
+7. Try registering again
+
+
+================================================================================
+VERIFICATION STEPS:
+================================================================================
+
+After following any method above, verify everything is working:
+
+1. Check if containers are running:
+   docker-compose ps
+
+   Both 'app' and 'db' should show as "Up"
+
+2. Check database logs:
+   docker-compose logs db | tail -n 20
+
+   Should not show any errors
+
+3. Test database connection:
+   docker-compose exec db mysql -uroot -proot db_tugasakhir -e "SELECT COUNT(*) FROM users;"
+
+   Should return "0" (no errors)
+
+4. Access the application:
+   Open browser: http://localhost:8080
+   Try to register an account
+
+
+================================================================================
+TROUBLESHOOTING:
+================================================================================
+
+If you still get errors:
+
+1. MySQL not ready yet:
+   - Wait longer (60-90 seconds) after starting containers
+   - MySQL takes time to initialize on Windows
+
+2. Port conflicts:
+   - Make sure no other MySQL or Apache is running on your Windows
+   - Stop XAMPP if it's running
+
+3. File permissions (Windows):
+   - Make sure Docker Desktop has access to your project folder
+   - Check Docker Desktop > Settings > Resources > File Sharing
+
+4. Check init.sql syntax:
+   - The file should be at: ./database/init.sql
+   - It should contain CREATE TABLE statements
+
+5. Docker Desktop issues:
+   - Restart Docker Desktop
+   - Make sure WSL2 backend is enabled (Settings > General)
+
+
+================================================================================
+DATABASE CONFIGURATION DETAILS:
+================================================================================
+
+From your docker-compose.yml:
+- Database Host: db (container name)
+- Database Name: db_tugasakhir
+- Username: root
+- Password: root
+- Port (from Windows): localhost:3306 (if exposed)
+- Port (from app container): db:3306
+
+From your database/config.php:
+- Server: db ✓ (correct)
+- Username: root ✓ (correct)
+- Password: root ✓ (correct)
+- Database: db_tugasakhir ✓ (correct)
+
+
+================================================================================
+PREVENTION:
+================================================================================
+
+To avoid this issue in the future:
+
+1. Always use "docker-compose down" to stop (not just Ctrl+C)
+2. To preserve data: just use "docker-compose stop"
+3. To reset database: use "docker-compose down -v"
+4. The database/init.sql will only run on first initialization
+
+
+================================================================================
+QUICK REFERENCE COMMANDS:
+================================================================================
+
+# Start containers
+docker-compose up -d
+
+# Stop containers (preserve data)
+docker-compose stop
+
+# Stop and remove containers (preserve volumes)
+docker-compose down
+
+# Stop, remove containers AND volumes (fresh start)
+docker-compose down -v
+
+# View logs
+docker-compose logs db
+docker-compose logs app
+
+# Access MySQL CLI
+docker-compose exec db mysql -uroot -proot db_tugasakhir
+
+# Check running containers
+docker-compose ps
+
+# Restart specific service
+docker-compose restart db
+
+
+================================================================================
+NEED MORE HELP?
+================================================================================
+
+If the problem persists:
+1. Check the container logs: docker-compose logs
+2. Make sure Docker Desktop is running properly
+3. Try restarting Docker Desktop
+4. Verify your database/init.sql file exists and is valid
+
+
+Last Updated: 2025-11-02
+================================================================================
