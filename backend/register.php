@@ -1,4 +1,5 @@
 <?php
+session_start();
 include "../database/config.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -26,7 +27,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sss", $username, $email, $passwordHash);
 
     if ($stmt->execute()) {
-        echo "Register berhasil. <a href='../frontend/index.php'>Login</a>";
+        $_SESSION['success_message'] = "Register berhasil! Silakan login.";
+        header("Location: /frontend/index.php");
+        exit;
     } else {
         echo "Register gagal: " . $stmt->error;
     }

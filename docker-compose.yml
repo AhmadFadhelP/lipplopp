@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build: .
@@ -18,6 +16,16 @@ services:
     volumes:
       - ./database:/docker-entrypoint-initdb.d
       - db_data:/var/lib/mysql
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    ports:
+      - "1883:1883" # MQTT
+      - "9001:9001" # WebSockets (if needed)
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
 
 volumes:
   db_data:

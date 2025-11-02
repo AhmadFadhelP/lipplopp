@@ -1,0 +1,229 @@
+# ============================================
+# Environment & Secrets
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+config.local.php
+secrets/
+credentials/
+*.key
+*.pem
+*.p12
+*.pfx
+
+# ============================================
+# Docker & Containers
+# ============================================
+# Docker volumes and data
+db_data/
+mysql_data/
+postgres_data/
+docker-compose.override.yml
+
+# Docker logs
+docker-compose.log
+
+# ============================================
+# MQTT Broker Data
+# ============================================
+# Mosquitto persistence
+mosquitto/data/mosquitto.db
+mosquitto/data/*.db
+mosquitto/log/
+mosquitto/logs/
+
+# ============================================
+# Database
+# ============================================
+# Database dumps and backups
+*.sql
+*.dump
+*.sqlite
+*.sqlite3
+*.db
+backups/
+backup/
+db_backup/
+database_backup/
+
+# Exclude init script from ignore (we want to keep it)
+!database/init.sql
+
+# ============================================
+# PHP
+# ============================================
+# Composer
+vendor/
+composer.lock
+composer.phar
+
+# PHP sessions
+php_sessions/
+sessions/
+
+# PHP errors
+php_errors.log
+error_log
+
+# PHP cache
+*.php.cache
+
+# ============================================
+# Logs
+# ============================================
+logs/
+log/
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ============================================
+# Cache & Temporary Files
+# ============================================
+cache/
+tmp/
+temp/
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# ============================================
+# IDE & Editors
+# ============================================
+# VSCode
+.vscode/
+.vscode-server/
+*.code-workspace
+
+# JetBrains (PHPStorm, WebStorm, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*.swn
+*~
+.*.sw[a-p]
+
+# Emacs
+\#*\#
+.\#*
+
+# Nano
+*.save
+
+# ============================================
+# Operating System
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
+
+# ============================================
+# Node.js (if used for frontend tools)
+# ============================================
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+.npm/
+.yarn/
+
+# ============================================
+# Testing & Coverage
+# ============================================
+coverage/
+.coverage
+.nyc_output/
+test-results/
+phpunit.xml
+.phpunit.result.cache
+
+# ============================================
+# Assets & Uploads (Project specific)
+# ============================================
+# User uploads (if any)
+uploads/*
+!uploads/.gitkeep
+
+# Generated assets
+public/assets/generated/
+public/build/
+
+# ============================================
+# Documentation Artifacts
+# ============================================
+# Generated documentation (keep source .md files)
+docs/build/
+docs/_build/
+site/
+
+# ============================================
+# Misc
+# ============================================
+# Patch files
+*.patch
+*.diff
+*.orig
+*.rej
+
+# Archive files (usually not needed in repo)
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Exclude test archives if needed
+!tests/fixtures/*.zip
+
+# PID files
+*.pid
+
+# Lock files
+*.lock
+
+# ============================================
+# Project Specific
+# ============================================
+# Test scripts output
+test_output/
+simulation_output/
+
+# Development notes (keep public docs)
+notes.txt
+todo.txt
+scratch.txt
+
+# Local development overrides
+docker-compose.local.yml
+config.local.json

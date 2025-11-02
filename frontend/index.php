@@ -75,6 +75,12 @@ session_start();
         // Hapus pesan error dari session agar tidak muncul lagi
         unset($_SESSION['error_message']);
     }
+    // Periksa apakah ada pesan sukses di session
+    if (isset($_SESSION['success_message'])) {
+        echo "<p style='text-align: center; color: green; margin-bottom: 15px; font-weight: bold;'>" . $_SESSION['success_message'] . "</p>";
+        // Hapus pesan sukses dari session agar tidak muncul lagi
+        unset($_SESSION['success_message']);
+    }
     ?>
     <form method="POST" action="../backend/login.php">
       <input type="text" name="username" placeholder="Username" required>
