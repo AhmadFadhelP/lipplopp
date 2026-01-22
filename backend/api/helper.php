@@ -76,7 +76,7 @@ function validateRequired($data, $requiredFields) {
     $errors = [];
 
     foreach ($requiredFields as $field) {
-        if (!isset($data[$field]) || empty($data[$field])) {
+        if (!isset($data[$field])) {
             $errors[] = "Field '{$field}' is required";
         }
     }
@@ -93,7 +93,7 @@ function validateRequired($data, $requiredFields) {
  */
 function validateNumeric($value, $fieldName = "Value") {
     if (!is_numeric($value)) {
-        sendError("{$fieldName} must be a numeric value", 400);
+        sendError("{$fieldName} must be numeric", 400);
     }
     return floatval($value);
 }
@@ -115,6 +115,7 @@ function validateRange($value, $min, $max, $fieldName = "Value") {
  * Get current timestamp
  */
 function getCurrentTimestamp() {
+    date_default_timezone_set("Asia/Jakarta");
     return date('Y-m-d H:i:s');
 }
 
@@ -156,7 +157,7 @@ function verifyApiKey($providedKey) {
 }
 
 /**
- * Rate limiting check (simple implementation)
+ * Rate limiting check
  */
 function checkRateLimit($identifier, $maxRequests = 100, $timeWindow = 3600) {
     $cacheFile = __DIR__ . '/../../cache/rate_limit_' . md5($identifier) . '.txt';
@@ -169,17 +170,16 @@ function checkRateLimit($identifier, $maxRequests = 100, $timeWindow = 3600) {
     $requests = [];
 
     if (file_exists($cacheFile)) {
-        $content = file_get_contents($cacheFile);
-        $requests = json_decode($content, true) ?: [];
+        $requests = json_decode(file_get_contents($cacheFile), true) ?: [];
 
-        // Remove old requests outside time window
+        // Remove old requests
         $requests = array_filter($requests, function($timestamp) use ($currentTime, $timeWindow) {
             return ($currentTime - $timestamp) < $timeWindow;
         });
     }
 
     if (count($requests) >= $maxRequests) {
-        sendError("Rate limit exceeded. Try again later.", 429);
+        sendError("Rate limit exceeded", 429);
     }
 
     $requests[] = $currentTime;
@@ -194,7 +194,7 @@ function checkRateLimit($identifier, $maxRequests = 100, $timeWindow = 3600) {
 function formatSensorData($rawData) {
     return [
         'id' => (int)$rawData['id'],
-        'water_level' => (float)$rawData['water_level'],
+        'water_level' => isset($rawData['water_level']) ? (float)$rawData['water_level'] : null,
         'turbidity' => (float)$rawData['turbidity'],
         'battery_voltage' => (float)$rawData['battery_voltage'],
         'battery_current' => (float)$rawData['battery_current'],
@@ -206,70 +206,54 @@ function formatSensorData($rawData) {
 }
 
 /**
- * Calculate battery percentage from voltage
- * Assuming 12V battery system (10.5V = 0%, 12.6V = 100%)
+ * Battery percentage (12V system)
  */
 function calculateBatteryPercentage($voltage) {
     $minVoltage = 10.5;
     $maxVoltage = 12.6;
 
     $percentage = (($voltage - $minVoltage) / ($maxVoltage - $minVoltage)) * 100;
-    $percentage = max(0, min(100, $percentage)); // Clamp between 0-100
-
-    return round($percentage, 1);
+    return round(max(0, min(100, $percentage)), 1);
 }
 
 /**
- * Determine battery status
+ * Battery status
  */
 function getBatteryStatus($voltage, $current) {
     $percentage = calculateBatteryPercentage($voltage);
 
-    if ($percentage >= 95) {
-        return 'Full';
-    } elseif ($percentage <= 20 && $current <= 0) {
-        return 'Low';
-    } elseif ($current > 0) {
-        return 'Charging';
-    } else {
-        return 'Normal';
-    }
+    if ($percentage >= 95) return 'Full';
+    if ($percentage <= 20 && $current <= 0) return 'Low';
+    if ($current > 0) return 'Charging';
+    return 'Normal';
 }
 
 /**
- * Validate sensor data ranges
+ * ================================
+ * VALIDATE SENSOR DATA (FINAL FIX)
+ * ================================
  */
 function validateSensorData($data) {
-    $errors = [];
+    $required = ['turbidity', 'battery_voltage', 'battery_current', 'solar_voltage', 'solar_current'];
 
-    if (isset($data['water_level'])) {
-        if ($data['water_level'] < 0 || $data['water_level'] > 100) {
-            $errors[] = "Water level must be between 0 and 100";
+    // Cek field wajib
+    foreach ($required as $field) {
+        if (!isset($data[$field])) {
+            sendError("Missing field: $field", 400);
+        }
+        if (!is_numeric($data[$field])) {
+            sendError("$field must be numeric", 400);
         }
     }
 
-    if (isset($data['turbidity'])) {
-        if ($data['turbidity'] < 0) {
-            $errors[] = "Turbidity cannot be negative";
+    // water_level boleh kosong
+    if (isset($data['water_level']) && $data['water_level'] !== null) {
+        if (!is_numeric($data['water_level'])) {
+            sendError("water_level must be numeric", 400);
         }
-    }
-
-    if (isset($data['battery_voltage'])) {
-        if ($data['battery_voltage'] < 0 || $data['battery_voltage'] > 20) {
-            $errors[] = "Battery voltage must be between 0 and 20V";
-        }
-    }
-
-    if (isset($data['battery_current'])) {
-        if ($data['battery_current'] < -50 || $data['battery_current'] > 50) {
-            $errors[] = "Battery current must be between -50 and 50A";
-        }
-    }
-
-    if (!empty($errors)) {
-        sendError("Sensor data validation failed", 400, $errors);
     }
 
     return true;
 }
+
 ?>
